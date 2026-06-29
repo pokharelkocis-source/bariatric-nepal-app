@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bariatric Nepal</string>
+
+    <!-- Server setup -->
+    <string name="server_setup_title">Welcome</string>
+    <string name="server_setup_subtitle">Enter your clinic\'s website address to get started.</string>
+    <string name="server_url_hint">e.g. yourclinic.com</string>
+    <string name="continue_btn">Continue</string>
+    <string name="server_url_error">Please enter a valid website address.</string>
+
+    <!-- Login -->
+    <string name="login_title">Patient Login</string>
+    <string name="login_subtitle">Sign in to track your recovery journey</string>
+    <string name="identifier_hint">Phone number or email</string>
+    <string name="password_hint">Password</string>
+    <string name="login_btn">Log In</string>
+    <string name="change_server">Change clinic website</string>
+
+    <!-- Change password -->
+    <string name="change_password_title">Set a New Password</string>
+    <string name="change_password_subtitle">For your security, please set a new password before continuing.</string>
+    <string name="current_password_hint">Current (temporary) password</string>
+    <string name="new_password_hint">New password (min 8 characters)</string>
+    <string name="confirm_password_hint">Confirm new password</string>
+    <string name="save_btn">Save &amp; Continue</string>
+
+    <!-- Bottom nav -->
+    <string name="nav_weight">Weight</string>
+    <string name="nav_blood">Blood</string>
+    <string name="nav_diet">Diet</string>
+    <string name="nav_meds">Meds</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Dashboard / Weight -->
+    <string name="current_weight">Current Weight</string>
+    <string name="bmi">BMI</string>
+    <string name="weight_lost">Weight Lost</string>
+    <string name="target_weight">Target Weight</string>
+    <string name="log_weight_title">Log Your Weight</string>
+    <string name="weight_kg_hint">Weight (kg)</string>
+    <string name="height_cm_hint">Height (cm) — optional</string>
+    <string name="notes_hint">Notes (optional)</string>
+    <string name="log_btn">Log Weight</string>
+    <string name="weight_history">Weight History</string>
+
+    <!-- Blood -->
+    <string name="blood_reports_title">Blood Reports</string>
+    <string name="add_report_btn">+ Add Report</string>
+    <string name="no_blood_reports">No blood reports yet.</string>
+
+    <!-- Complaints -->
+    <string name="complaints_title">Health Complaints</string>
+    <string name="submit_complaint_hint">Describe what you\'re experiencing…</string>
+    <string name="submit_btn">Submit</string>
+    <string name="no_complaints">No complaints submitted yet.</string>
+
+    <!-- Diet / Meds -->
+    <string name="no_diet">No diet chart assigned yet.</string>
+    <string name="no_meds">No medications prescribed yet.</string>
+
+    <!-- Notifications -->
+    <string name="notifications_title">Notifications</string>
+    <string name="mark_all_read">Mark all read</string>
+    <string name="no_notifications">No notifications yet.</string>
+
+    <!-- Profile -->
+    <string name="my_details">My Details</string>
+    <string name="full_name_hint">Full Name</string>
+    <string name="phone_hint">Phone</string>
+    <string name="email_hint">Email</string>
+    <string name="update_btn">Update</string>
+    <string name="change_password_btn">Change Password</string>
+    <string name="logout_btn">Log Out</string>
+    <string name="logout_confirm">Are you sure you want to log out?</string>
+
+
+    <!-- Intake (NEW v13) -->
+    <string name="nav_intake">Intake</string>
+    <string name="intake_title">Daily Intake</string>
+    <string name="protein_hint">Protein today (g)</string>
+    <string name="water_hint">Water today (ml)</string>
+    <string name="save_intake_btn">Save Intake</string>
+
+    <!-- Common -->
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="retry">Retry</string>
+    <string name="error_generic">Something went wrong. Please try again.</string>
+    <string name="error_network">Can\'t reach the server. Check your internet connection.</string>
+</resources>

@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/swipeRefresh"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bn_bg">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Stats grid: 2x2 (inline - avoids ViewBinding include complexity) -->
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                <LinearLayout android:id="@+id/statCurrentWeight" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="6dp" android:background="@drawable/bg_stat_card" android:orientation="vertical" android:padding="14dp">
+                    <TextView android:id="@+id/tvStatLblWeight" android:layout_width="match_parent" android:layout_height="wrap_content" android:textAllCaps="true" android:textColor="@color/bn_muted" android:textSize="10sp" android:textStyle="bold" android:text="Current Weight"/>
+                    <TextView android:id="@+id/tvStatValWeight" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textColor="@color/bn_text" android:textSize="19sp" android:textStyle="bold" android:text="— kg"/>
+                </LinearLayout>
+                <LinearLayout android:id="@+id/statBmi" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="6dp" android:background="@drawable/bg_stat_card" android:orientation="vertical" android:padding="14dp">
+                    <TextView android:id="@+id/tvStatLblBmi" android:layout_width="match_parent" android:layout_height="wrap_content" android:textAllCaps="true" android:textColor="@color/bn_muted" android:textSize="10sp" android:textStyle="bold" android:text="BMI"/>
+                    <TextView android:id="@+id/tvStatValBmi" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textColor="@color/bn_text" android:textSize="19sp" android:textStyle="bold" android:text="—"/>
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:orientation="horizontal">
+                <LinearLayout android:id="@+id/statLost" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="6dp" android:background="@drawable/bg_stat_card" android:orientation="vertical" android:padding="14dp">
+                    <TextView android:id="@+id/tvStatLblLost" android:layout_width="match_parent" android:layout_height="wrap_content" android:textAllCaps="true" android:textColor="@color/bn_muted" android:textSize="10sp" android:textStyle="bold" android:text="Weight Lost"/>
+                    <TextView android:id="@+id/tvStatValLost" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textColor="@color/bn_text" android:textSize="19sp" android:textStyle="bold" android:text="0 kg"/>
+                </LinearLayout>
+                <LinearLayout android:id="@+id/statTarget" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="6dp" android:background="@drawable/bg_stat_card" android:orientation="vertical" android:padding="14dp">
+                    <TextView android:id="@+id/tvStatLblTarget" android:layout_width="match_parent" android:layout_height="wrap_content" android:textAllCaps="true" android:textColor="@color/bn_muted" android:textSize="10sp" android:textStyle="bold" android:text="Target Weight"/>
+                    <TextView android:id="@+id/tvStatValTarget" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textColor="@color/bn_text" android:textSize="19sp" android:textStyle="bold" android:text="—"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Chart card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Progress"
+                        android:textColor="@color/bn_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <com.bariatricnepal.app.ui.weight.WeightChartView
+                        android:id="@+id/weightChart"
+                        android:layout_width="match_parent"
+                        android:layout_height="160dp"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Log weight card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/log_weight_title"
+                        android:textColor="@color/bn_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+
+                        <EditText
+                            android:id="@+id/etWeight"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_input_field"
+                            android:hint="@string/weight_kg_hint"
+                            android:inputType="numberDecimal"
+                            android:maxLines="1"
+                            android:textColor="@color/bn_text"
+                            android:textColorHint="@color/bn_muted"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <EditText
+                        android:id="@+id/etWeightNotes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/bg_input_field"
+                        android:hint="@string/notes_hint"
+                        android:maxLines="2"
+                        android:textColor="@color/bn_text"
+                        android:textColorHint="@color/bn_muted"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/tvWeightFormError"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textColor="@color/bn_red"
+                        android:textSize="12.5sp"
+                        android:visibility="gone" />
+
+                    <Button
+                        android:id="@+id/btnLogWeight"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_btn_primary"
+                        android:text="@string/log_btn"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Complaints entry card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardComplaints"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💬"
+                        android:textSize="22sp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="@string/complaints_title"
+                        android:textColor="@color/bn_text"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="›"
+                        android:textColor="@color/bn_muted"
+                        android:textSize="20sp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Weight history -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="6dp"
+                android:text="@string/weight_history"
+                android:textColor="@color/bn_text"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="6dp">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvWeightHistory"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp" />
+
+                    <TextView
+                        android:id="@+id/tvWeightEmpty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="24dp"
+                        android:text="No weight logs yet — add your first one above!"
+                        android:textColor="@color/bn_muted"
+                        android:textSize="13sp"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <View android:layout_width="match_parent" android:layout_height="20dp" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

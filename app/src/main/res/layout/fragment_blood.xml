@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/swipeRefresh"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bn_bg">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:id="@+id/headerAddReport"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/blood_reports_title"
+                            android:textColor="@color/bn_primary"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvToggleAdd"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/add_report_btn"
+                            android:textColor="@color/bn_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/formAddReport"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <EditText
+                            android:id="@+id/etReportDate"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_input_field"
+                            android:focusable="false"
+                            android:hint="Report Date"
+                            android:textColor="@color/bn_text"
+                            android:textColorHint="@color/bn_muted"
+                            android:textSize="14sp" />
+
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:orientation="horizontal">
+                            <EditText android:id="@+id/etHb" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="5dp" android:background="@drawable/bg_input_field" android:hint="Hb (g/dL)" android:inputType="numberDecimal" android:textColor="@color/bn_text" android:textColorHint="@color/bn_muted" android:textSize="13sp" />
+                            <EditText android:id="@+id/etB12" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="5dp" android:background="@drawable/bg_input_field" android:hint="Vitamin B12" android:inputType="numberDecimal" android:textColor="@color/bn_text" android:textColorHint="@color/bn_muted" android:textSize="13sp" />
+                        </LinearLayout>
+
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
+                            <EditText android:id="@+id/etVitD" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="5dp" android:background="@drawable/bg_input_field" android:hint="Vitamin D" android:inputType="numberDecimal" android:textColor="@color/bn_text" android:textColorHint="@color/bn_muted" android:textSize="13sp" />
+                            <EditText android:id="@+id/etFerritin" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="5dp" android:background="@drawable/bg_input_field" android:hint="Ferritin" android:inputType="numberDecimal" android:textColor="@color/bn_text" android:textColorHint="@color/bn_muted" android:textSize="13sp" />
+                        </LinearLayout>
+
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
+                            <EditText android:id="@+id/etCalcium" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="5dp" android:background="@drawable/bg_input_field" android:hint="Calcium" android:inputType="numberDecimal" android:textColor="@color/bn_text" android:textColorHint="@color/bn_muted" android:textSize="13sp" />
+                            <EditText android:id="@+id/etGlucose" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="5dp" android:background="@drawable/bg_input_field" android:hint="Glucose" android:inputType="numberDecimal" android:textColor="@color/bn_text" android:textColorHint="@color/bn_muted" android:textSize="13sp" />
+                        </LinearLayout>
+
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
+                            <EditText android:id="@+id/etHba1c" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="5dp" android:background="@drawable/bg_input_field" android:hint="HbA1c" android:inputType="numberDecimal" android:textColor="@color/bn_text" android:textColorHint="@color/bn_muted" android:textSize="13sp" />
+                            <EditText android:id="@+id/etCholesterol" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="5dp" android:background="@drawable/bg_input_field" android:hint="Cholesterol" android:inputType="numberDecimal" android:textColor="@color/bn_text" android:textColorHint="@color/bn_muted" android:textSize="13sp" />
+                        </LinearLayout>
+
+                        <EditText
+                            android:id="@+id/etTriglycerides"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/bg_input_field"
+                            android:hint="Triglycerides"
+                            android:inputType="numberDecimal"
+                            android:textColor="@color/bn_text"
+                            android:textColorHint="@color/bn_muted"
+                            android:textSize="13sp" />
+
+                        
+                        <!-- NEW v13: WBC and Total Protein -->
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp">
+                            <EditText android:id="@+id/etWbc" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="5dp" android:background="@drawable/bg_input_field" android:hint="WBC (×10³/µL)" android:inputType="numberDecimal" android:textColor="@color/bn_text" android:textColorHint="@color/bn_muted" android:textSize="13sp" />
+                            <EditText android:id="@+id/etTotalProtein" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="5dp" android:background="@drawable/bg_input_field" android:hint="Total Protein" android:inputType="numberDecimal" android:textColor="@color/bn_text" android:textColorHint="@color/bn_muted" android:textSize="13sp" />
+                        </LinearLayout>
+                        <!-- NEW v13: Albumin and LFT -->
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp">
+                            <EditText android:id="@+id/etAlbumin" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="5dp" android:background="@drawable/bg_input_field" android:hint="Albumin (g/dL)" android:inputType="numberDecimal" android:textColor="@color/bn_text" android:textColorHint="@color/bn_muted" android:textSize="13sp" />
+                            <EditText android:id="@+id/etLft" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="5dp" android:background="@drawable/bg_input_field" android:hint="LFT / ALT" android:inputType="numberDecimal" android:textColor="@color/bn_text" android:textColorHint="@color/bn_muted" android:textSize="13sp" />
+                        </LinearLayout>
+                        <EditText
+                            android:id="@+id/etReportNotes"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/bg_input_field"
+                            android:hint="@string/notes_hint"
+                            android:maxLines="2"
+                            android:textColor="@color/bn_text"
+                            android:textColorHint="@color/bn_muted"
+                            android:textSize="13sp" />
+
+                        <TextView
+                            android:id="@+id/tvReportFormError"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:textColor="@color/bn_red"
+                            android:textSize="12.5sp"
+                            android:visibility="gone" />
+
+                        <Button
+                            android:id="@+id/btnSubmitReport"
+                            android:layout_width="match_parent"
+                            android:layout_height="46dp"
+                            android:layout_marginTop="10dp"
+                            android:background="@drawable/bg_btn_primary"
+                            android:text="@string/submit_btn"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvBloodReports"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:nestedScrollingEnabled="false" />
+
+            <TextView
+                android:id="@+id/tvBloodEmpty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:padding="24dp"
+                android:text="@string/no_blood_reports"
+                android:textColor="@color/bn_muted"
+                android:textSize="13sp"
+                android:visibility="gone" />
+
+            <View android:layout_width="match_parent" android:layout_height="20dp" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

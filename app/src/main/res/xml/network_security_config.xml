@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Most WordPress sites use HTTPS, which is always allowed.
+  cleartextTrafficPermitted="true" here just means the app WON'T crash
+  if a clinic's site is temporarily on plain http:// (e.g. a local test
+  server) — change to "false" once your live site is confirmed on https.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>
