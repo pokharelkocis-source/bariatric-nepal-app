@@ -44,7 +44,7 @@ class MedsFragment : Fragment() {
     private fun load() {
         lifecycleScope.launch {
             b.swipeRefresh.isRefreshing = true
-            when (val r = app.repository.getMedications()) {
+            when (val r = app.repository?.getMedications()) {
                 is ApiResult.Success -> render(r.data)
                 is ApiResult.Error   -> showError(r.message)
             }
@@ -96,7 +96,7 @@ class MedsFragment : Fragment() {
                 }
                 checkBox.setOnCheckedChangeListener { _, isChecked ->
                     lifecycleScope.launch {
-                        when (val r = app.repository.logMedicationTaken(med.id, isChecked)) {
+                        when (val r = app.repository?.logMedicationTaken(med.id, isChecked)) {
                             is ApiResult.Success -> {
                                 if (isChecked) takenToday.add(med.id)
                                 else takenToday.remove(med.id)
@@ -122,7 +122,7 @@ class MedsFragment : Fragment() {
     private fun attachCheckListener(checkBox: CheckBox, medId: String) {
         checkBox.setOnCheckedChangeListener { _, isChecked ->
             lifecycleScope.launch {
-                when (val r = app.repository.logMedicationTaken(medId, isChecked)) {
+                when (val r = app.repository?.logMedicationTaken(medId, isChecked)) {
                     is ApiResult.Success -> {
                         if (isChecked) takenToday.add(medId) else takenToday.remove(medId)
                     }

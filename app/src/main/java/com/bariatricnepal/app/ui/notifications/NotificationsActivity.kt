@@ -39,7 +39,7 @@ class NotificationsActivity : AppCompatActivity() {
     private fun load() {
         lifecycleScope.launch {
             b.swipeRefresh.isRefreshing = true
-            when (val r = app.repository.getNotifications()) {
+            when (val r = app.repository?.getNotifications()) {
                 is ApiResult.Success -> {
                     adapter.submitList(r.data) { id: String -> markOneRead(id) }
                     b.tvEmpty.visibility = if (r.data.isEmpty()) View.VISIBLE else View.GONE
@@ -55,14 +55,14 @@ class NotificationsActivity : AppCompatActivity() {
 
     private fun markAllRead() {
         lifecycleScope.launch {
-            app.repository.markAllNotificationsRead()
+            app.repository?.markAllNotificationsRead()
             load()
         }
     }
 
     private fun markOneRead(id: String) {
         lifecycleScope.launch {
-            app.repository.markNotificationRead(id)
+            app.repository?.markNotificationRead(id)
             load()
         }
     }

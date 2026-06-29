@@ -10,7 +10,8 @@ class BNApplication : Application() {
     lateinit var sessionStore: SessionStore
         private set
 
-    lateinit var repository: BNRepository
+    // Made nullable so we never crash if accessed before server is configured
+    var repository: BNRepository? = null
         private set
 
     override fun onCreate() {
@@ -19,16 +20,18 @@ class BNApplication : Application() {
         rebuildRepository()
     }
 
-    /**
-     * Call this whenever the server URL changes (initial setup, or the
-     * user picks "Change clinic website" later) so the network client
-     * points at the right place. The auth token itself is read fresh on
-     * every request by the interceptor, so logging in/out doesn't need
-     * a rebuild — only the base URL does.
-     */
     fun rebuildRepository() {
-        if (sessionStore.isServerConfigured) {
-            repository = BNRepository(ApiClient.create(sessionStore))
+        repository = try {
+            if (sessionStore.isServerConfigured) {
+                BNRepository(ApiClient.create(sessionStore))
+            } else null
+        } catch (e: Exception) {
+            null
         }
+    }
+
+    // Safe accessor — throws a clear error instead of a cryptic NPE
+    fun requireRepository(): BNRepository {
+        return repository ?: throw IllegalStateException("Repository not initialized — server URL missing")
     }
 }

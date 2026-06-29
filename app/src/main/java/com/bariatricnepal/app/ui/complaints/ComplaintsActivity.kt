@@ -30,7 +30,7 @@ class ComplaintsActivity : AppCompatActivity() {
     private fun load() {
         lifecycleScope.launch {
             b.swipeRefresh.isRefreshing = true
-            when (val r = app.repository.getComplaints()) {
+            when (val r = app.repository?.getComplaints()) {
                 is ApiResult.Success -> {
                     adapter.submitList(r.data)
                     b.tvEmpty.visibility = if (r.data.isEmpty()) View.VISIBLE else View.GONE
@@ -56,7 +56,7 @@ class ComplaintsActivity : AppCompatActivity() {
         b.tvFormError.visibility = View.GONE
         b.btnSubmit.isEnabled = false
         lifecycleScope.launch {
-            when (val r = app.repository.addComplaint(text, severity)) {
+            when (val r = app.repository?.addComplaint(text, severity)) {
                 is ApiResult.Success -> {
                     b.btnSubmit.isEnabled = true
                     b.etComplaintText.text.clear()

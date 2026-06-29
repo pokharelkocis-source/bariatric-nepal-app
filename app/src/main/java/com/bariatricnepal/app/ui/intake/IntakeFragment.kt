@@ -45,7 +45,7 @@ class IntakeFragment : Fragment() {
             b.swipeRefresh.isRefreshing = true
 
             // Load profile for goals
-            val profileResult = app.repository.getProfile()
+            val profileResult = app.repository?.getProfile()
             if (profileResult is ApiResult.Success) {
                 val p = profileResult.data
                 proteinGoal = p.protein_goal_g.toSafeDouble() ?: 60.0
@@ -55,7 +55,7 @@ class IntakeFragment : Fragment() {
             }
 
             // Load today's intake
-            when (val r = app.repository.getDailyIntake()) {
+            when (val r = app.repository?.getDailyIntake()) {
                 is ApiResult.Success -> renderIntake(
                     r.data.protein_g.toSafeDouble() ?: 0.0,
                     r.data.water_ml?.toIntOrNull() ?: 0
@@ -94,7 +94,7 @@ class IntakeFragment : Fragment() {
 
         b.btnSaveIntake.isEnabled = false
         lifecycleScope.launch {
-            when (val r = app.repository.updateDailyIntake(protein, water)) {
+            when (val r = app.repository?.updateDailyIntake(protein, water)) {
                 is ApiResult.Success -> {
                     if (_b == null) return@launch
                     val data = r.data.data

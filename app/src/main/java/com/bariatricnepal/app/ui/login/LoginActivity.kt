@@ -24,6 +24,9 @@ class LoginActivity : AppCompatActivity() {
         if (!app.sessionStore.isServerConfigured) {
             startActivity(Intent(this, ServerSetupActivity::class.java)); finish(); return
         }
+        // Rebuild repository in case it wasn't initialized
+        if (app.repository == null) app.rebuildRepository()
+
         if (app.sessionStore.isLoggedIn) {
             startActivity(Intent(this, MainActivity::class.java)); finish(); return
         }
@@ -54,25 +57,50 @@ class LoginActivity : AppCompatActivity() {
     private fun handleLogin() {
         val id = b.etIdentifier.text.toString().trim()
         val pw = b.etPassword.text.toString()
-        if (id.isEmpty() || pw.isEmpty()) { showError("Please enter both your phone/email and password."); return }
+        if (id.isEmpty() || pw.isEmpty()) {
+            showError("Please enter both your phone/email and password."); return
+        }
+
+        val repo = app.repository
+        if (repo == null) {
+            showError("Server not configured. Please go back and enter your clinic website.")
+            return
+        }
+
         setLoading(true)
         lifecycleScope.launch {
-            when (val r = app.repository.login(id, pw)) {
-                is ApiResult.Success -> {
-                    val data = r.data
-                    app.sessionStore.token = data.token
-                    app.sessionStore.patientId = data.patient_id
-                    app.sessionStore.fullName = data.full_name
-                    setLoading(false)
-                    val target = if (!data.password_changed) ChangePasswordActivity::class.java else MainActivity::class.java
-                    startActivity(Intent(this@LoginActivity, target)); finish()
+            try {
+                when (val r = repo.login(id, pw)) {
+                    is ApiResult.Success -> {
+                        val data = r.data
+                        app.sessionStore.token = data.token
+                        app.sessionStore.patientId = data.patient_id
+                        app.sessionStore.fullName = data.full_name
+                        setLoading(false)
+                        val target = if (!data.password_changed)
+                            ChangePasswordActivity::class.java
+                        else
+                            MainActivity::class.java
+                        startActivity(Intent(this@LoginActivity, target))
+                        finish()
+                    }
+                    is ApiResult.Error -> {
+                        setLoading(false)
+                        showError(r.message)
+                    }
                 }
-                is ApiResult.Error -> { setLoading(false); showError(r.message) }
+            } catch (e: Exception) {
+                setLoading(false)
+                showError("Login failed: ${e.message}")
             }
         }
     }
 
-    private fun showError(msg: String) { b.tvLoginError.text = msg; b.tvLoginError.visibility = View.VISIBLE }
+    private fun showError(msg: String) {
+        b.tvLoginError.text = msg
+        b.tvLoginError.visibility = View.VISIBLE
+    }
+
     private fun setLoading(on: Boolean) {
         b.progressBar.visibility = if (on) View.VISIBLE else View.GONE
         b.btnLogin.isEnabled = !on

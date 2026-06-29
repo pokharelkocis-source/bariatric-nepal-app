@@ -60,7 +60,7 @@ class ProfileFragment : Fragment() {
     private fun load() {
         lifecycleScope.launch {
             b.swipeRefresh.isRefreshing = true
-            when (val r = app.repository.getProfile()) {
+            when (val r = app.repository?.getProfile()) {
                 is ApiResult.Success -> {
                     if (_b == null) return@launch
                     val p = r.data
@@ -109,7 +109,7 @@ class ProfileFragment : Fragment() {
                     showAvatarMsg("Could not read the image.", true)
                     return@launch
                 }
-                when (val r = app.repository.uploadProfilePicture(file)) {
+                when (val r = app.repository?.uploadProfilePicture(file)) {
                     is ApiResult.Success -> {
                         if (_b == null) return@launch
                         showAvatarMsg("Photo updated!", false)

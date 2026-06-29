@@ -23,7 +23,6 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    // Exposed for ProfileFragment to update the toolbar name after profile edit
     lateinit var mainBinding: ActivityMainBinding
         private set
 
@@ -38,6 +37,9 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        // Make sure repository is ready
+        if (app.repository == null) app.rebuildRepository()
+
         mainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mainBinding.root)
 
@@ -51,7 +53,7 @@ class MainActivity : AppCompatActivity() {
             val fragment: Fragment = when (item.itemId) {
                 R.id.nav_weight  -> WeightFragment()
                 R.id.nav_blood   -> BloodFragment()
-                R.id.nav_intake  -> IntakeFragment()   // NEW v13
+                R.id.nav_intake  -> IntakeFragment()
                 R.id.nav_diet    -> DietFragment()
                 R.id.nav_meds    -> MedsFragment()
                 R.id.nav_profile -> ProfileFragment()
@@ -78,18 +80,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadProfileHeader() {
         showAvatar(app.sessionStore.profilePicture)
-
+        val repo = app.repository ?: return
         lifecycleScope.launch {
-            when (val result = app.repository.getProfile()) {
-                is ApiResult.Success -> {
-                    val p = result.data
-                    mainBinding.tvUserName.text = p.full_name
-                    app.sessionStore.fullName = p.full_name
-                    app.sessionStore.profilePicture = p.profile_picture
-                    showAvatar(p.profile_picture)
+            try {
+                when (val result = repo.getProfile()) {
+                    is ApiResult.Success -> {
+                        val p = result.data
+                        mainBinding.tvUserName.text = p.full_name
+                        app.sessionStore.fullName = p.full_name
+                        app.sessionStore.profilePicture = p.profile_picture
+                        showAvatar(p.profile_picture)
+                    }
+                    is ApiResult.Error -> { /* keep cached */ }
                 }
-                is ApiResult.Error -> { /* keep cached */ }
-            }
+            } catch (e: Exception) { /* ignore */ }
         }
     }
 
@@ -108,19 +112,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun refreshUnreadBadge() {
+        val repo = app.repository ?: return
         lifecycleScope.launch {
-            when (val result = app.repository.getNotifications()) {
-                is ApiResult.Success -> {
-                    val unread = result.data.count { it.is_read != "1" }
-                    if (unread > 0) {
-                        mainBinding.tvNotifBadge.visibility = View.VISIBLE
-                        mainBinding.tvNotifBadge.text = if (unread > 9) "9+" else unread.toString()
-                    } else {
-                        mainBinding.tvNotifBadge.visibility = View.GONE
+            try {
+                when (val result = repo.getNotifications()) {
+                    is ApiResult.Success -> {
+                        val unread = result.data.count { it.is_read != "1" }
+                        if (unread > 0) {
+                            mainBinding.tvNotifBadge.visibility = View.VISIBLE
+                            mainBinding.tvNotifBadge.text = if (unread > 9) "9+" else unread.toString()
+                        } else {
+                            mainBinding.tvNotifBadge.visibility = View.GONE
+                        }
                     }
+                    is ApiResult.Error -> { /* ignore */ }
                 }
-                is ApiResult.Error -> { /* ignore */ }
-            }
+            } catch (e: Exception) { /* ignore */ }
         }
     }
 }
