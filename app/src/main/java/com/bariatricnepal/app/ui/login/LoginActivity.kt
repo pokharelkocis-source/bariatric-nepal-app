@@ -10,7 +10,6 @@ import com.bariatricnepal.app.BNApplication
 import com.bariatricnepal.app.R
 import com.bariatricnepal.app.databinding.ActivityLoginBinding
 import com.bariatricnepal.app.ui.common.MainActivity
-import com.bariatricnepal.app.ui.common.ServerSetupActivity
 import com.bariatricnepal.app.util.ApiResult
 import kotlinx.coroutines.launch
 
@@ -21,20 +20,14 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(s: Bundle?) {
         super.onCreate(s)
-        if (!app.sessionStore.isServerConfigured) {
-            startActivity(Intent(this, ServerSetupActivity::class.java)); finish(); return
-        }
-        // Rebuild repository in case it wasn't initialized
-        if (app.repository == null) app.rebuildRepository()
-
         if (app.sessionStore.isLoggedIn) {
             startActivity(Intent(this, MainActivity::class.java)); finish(); return
         }
         b = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(b.root)
+        b.tvChangeServer.visibility = View.GONE
         b.btnLogin.setOnClickListener { handleLogin() }
         b.btnTogglePassword.setOnClickListener { togglePassword() }
-        b.tvChangeServer.setOnClickListener { changeServer() }
     }
 
     private fun togglePassword() {
@@ -49,45 +42,26 @@ class LoginActivity : AppCompatActivity() {
         b.etPassword.setSelection(b.etPassword.text.length)
     }
 
-    private fun changeServer() {
-        app.sessionStore.baseUrl = null
-        startActivity(Intent(this, ServerSetupActivity::class.java)); finish()
-    }
-
     private fun handleLogin() {
         val id = b.etIdentifier.text.toString().trim()
         val pw = b.etPassword.text.toString()
         if (id.isEmpty() || pw.isEmpty()) {
-            showError("Please enter both your phone/email and password."); return
+            showError("Please enter your phone/email and password."); return
         }
-
-        val repo = app.repository
-        if (repo == null) {
-            showError("Server not configured. Please go back and enter your clinic website.")
-            return
-        }
-
         setLoading(true)
         lifecycleScope.launch {
             try {
-                when (val r = repo.login(id, pw)) {
+                when (val r = app.repository.login(id, pw)) {
                     is ApiResult.Success -> {
-                        val data = r.data
-                        app.sessionStore.token = data.token
-                        app.sessionStore.patientId = data.patient_id
-                        app.sessionStore.fullName = data.full_name
+                        app.sessionStore.token = r.data.token
+                        app.sessionStore.patientId = r.data.patient_id
+                        app.sessionStore.fullName = r.data.full_name
                         setLoading(false)
-                        val target = if (!data.password_changed)
-                            ChangePasswordActivity::class.java
-                        else
-                            MainActivity::class.java
-                        startActivity(Intent(this@LoginActivity, target))
-                        finish()
+                        val target = if (!r.data.password_changed)
+                            ChangePasswordActivity::class.java else MainActivity::class.java
+                        startActivity(Intent(this@LoginActivity, target)); finish()
                     }
-                    is ApiResult.Error -> {
-                        setLoading(false)
-                        showError(r.message)
-                    }
+                    is ApiResult.Error -> { setLoading(false); showError(r.message) }
                 }
             } catch (e: Exception) {
                 setLoading(false)
@@ -97,8 +71,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun showError(msg: String) {
-        b.tvLoginError.text = msg
-        b.tvLoginError.visibility = View.VISIBLE
+        b.tvLoginError.text = msg; b.tvLoginError.visibility = View.VISIBLE
     }
 
     private fun setLoading(on: Boolean) {

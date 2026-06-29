@@ -30,25 +30,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         if (!app.sessionStore.isLoggedIn) {
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
-            return
+            startActivity(Intent(this, LoginActivity::class.java)); finish(); return
         }
-
-        // Make sure repository is ready
-        if (app.repository == null) app.rebuildRepository()
-
         mainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mainBinding.root)
-
         mainBinding.tvUserName.text = app.sessionStore.fullName ?: getString(R.string.app_name)
-
         mainBinding.notifFrame.setOnClickListener {
             startActivity(Intent(this, NotificationsActivity::class.java))
         }
-
         mainBinding.bottomNav.setOnItemSelectedListener { item ->
             val fragment: Fragment = when (item.itemId) {
                 R.id.nav_weight  -> WeightFragment()
@@ -60,40 +50,30 @@ class MainActivity : AppCompatActivity() {
                 else             -> WeightFragment()
             }
             supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, fragment)
-                .commit()
+                .replace(R.id.fragmentContainer, fragment).commit()
             true
         }
-
-        if (savedInstanceState == null) {
-            mainBinding.bottomNav.selectedItemId = R.id.nav_weight
-        }
-
+        if (savedInstanceState == null) mainBinding.bottomNav.selectedItemId = R.id.nav_weight
         loadProfileHeader()
         refreshUnreadBadge()
     }
 
-    override fun onResume() {
-        super.onResume()
-        refreshUnreadBadge()
-    }
+    override fun onResume() { super.onResume(); refreshUnreadBadge() }
 
     private fun loadProfileHeader() {
         showAvatar(app.sessionStore.profilePicture)
-        val repo = app.repository ?: return
         lifecycleScope.launch {
             try {
-                when (val result = repo.getProfile()) {
+                when (val r = app.repository.getProfile()) {
                     is ApiResult.Success -> {
-                        val p = result.data
-                        mainBinding.tvUserName.text = p.full_name
-                        app.sessionStore.fullName = p.full_name
-                        app.sessionStore.profilePicture = p.profile_picture
-                        showAvatar(p.profile_picture)
+                        mainBinding.tvUserName.text = r.data.full_name
+                        app.sessionStore.fullName = r.data.full_name
+                        app.sessionStore.profilePicture = r.data.profile_picture
+                        showAvatar(r.data.profile_picture)
                     }
-                    is ApiResult.Error -> { /* keep cached */ }
+                    is ApiResult.Error -> {}
                 }
-            } catch (e: Exception) { /* ignore */ }
+            } catch (e: Exception) {}
         }
     }
 
@@ -112,22 +92,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun refreshUnreadBadge() {
-        val repo = app.repository ?: return
         lifecycleScope.launch {
             try {
-                when (val result = repo.getNotifications()) {
+                when (val r = app.repository.getNotifications()) {
                     is ApiResult.Success -> {
-                        val unread = result.data.count { it.is_read != "1" }
-                        if (unread > 0) {
-                            mainBinding.tvNotifBadge.visibility = View.VISIBLE
-                            mainBinding.tvNotifBadge.text = if (unread > 9) "9+" else unread.toString()
-                        } else {
-                            mainBinding.tvNotifBadge.visibility = View.GONE
-                        }
+                        val unread = r.data.count { it.is_read != "1" }
+                        mainBinding.tvNotifBadge.visibility =
+                            if (unread > 0) View.VISIBLE else View.GONE
+                        mainBinding.tvNotifBadge.text =
+                            if (unread > 9) "9+" else unread.toString()
                     }
-                    is ApiResult.Error -> { /* ignore */ }
+                    is ApiResult.Error -> {}
                 }
-            } catch (e: Exception) { /* ignore */ }
+            } catch (e: Exception) {}
         }
     }
 }

@@ -38,7 +38,7 @@ class DietFragment : Fragment() {
     private fun load() {
         lifecycleScope.launch {
             b.swipeRefresh.isRefreshing = true
-            when (val r = app.repository?.getDietCharts()) {
+            when (val r = app.repository!!.getDietCharts()) {
                 is ApiResult.Success -> render(r.data)
                 is ApiResult.Error   -> showError(r.message)
             }

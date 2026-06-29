@@ -52,7 +52,7 @@ class ChangePasswordActivity : AppCompatActivity() {
 
         setLoading(true)
         lifecycleScope.launch {
-            when (val result = app.repository?.changePassword(current, new)) {
+            when (val result = app.repository!!.changePassword(current, new)) {
                 is ApiResult.Success -> {
                     setLoading(false)
                     startActivity(Intent(this@ChangePasswordActivity, MainActivity::class.java))

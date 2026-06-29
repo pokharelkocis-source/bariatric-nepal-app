@@ -53,7 +53,7 @@ class WeightFragment : Fragment() {
 
     private fun loadProfile() {
         lifecycleScope.launch {
-            when (val result = app.repository?.getProfile()) {
+            when (val result = app.repository!!.getProfile()) {
                 is ApiResult.Success -> applyProfile(result.data)
                 is ApiResult.Error -> { /* keep last known values */ }
             }
@@ -82,7 +82,7 @@ class WeightFragment : Fragment() {
     private fun loadHistory() {
         lifecycleScope.launch {
             binding.swipeRefresh.isRefreshing = true
-            when (val result = app.repository?.getWeights()) {
+            when (val result = app.repository!!.getWeights()) {
                 is ApiResult.Success -> {
                     if (_binding == null) return@launch
                     val logs = result.data
@@ -115,7 +115,7 @@ class WeightFragment : Fragment() {
         binding.btnLogWeight.isEnabled = false
 
         lifecycleScope.launch {
-            when (val result = app.repository?.logWeight(weight, notes)) {
+            when (val result = app.repository!!.logWeight(weight, notes)) {
                 is ApiResult.Success -> {
                     if (_binding == null) return@launch
                     binding.etWeight.text.clear()

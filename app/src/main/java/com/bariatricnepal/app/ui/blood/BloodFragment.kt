@@ -60,7 +60,7 @@ class BloodFragment : Fragment() {
     private fun load() {
         lifecycleScope.launch {
             b.swipeRefresh.isRefreshing = true
-            when (val r = app.repository?.getBloodReports()) {
+            when (val r = app.repository!!.getBloodReports()) {
                 is ApiResult.Success -> {
                     if (_b == null) return@launch
                     adapter.submitList(r.data)
@@ -106,7 +106,7 @@ class BloodFragment : Fragment() {
         b.btnSubmitReport.isEnabled = false
 
         lifecycleScope.launch {
-            when (val r = app.repository?.addBloodReport(fields)) {
+            when (val r = app.repository!!.addBloodReport(fields)) {
                 is ApiResult.Success -> {
                     if (_b == null) return@launch
                     b.btnSubmitReport.isEnabled = true

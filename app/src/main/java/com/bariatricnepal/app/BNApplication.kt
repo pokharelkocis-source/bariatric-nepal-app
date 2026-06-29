@@ -10,28 +10,21 @@ class BNApplication : Application() {
     lateinit var sessionStore: SessionStore
         private set
 
-    // Made nullable so we never crash if accessed before server is configured
-    var repository: BNRepository? = null
+    // Always non-null — URL is hardcoded to www.bariatricnepal.com
+    lateinit var repository: BNRepository
         private set
 
     override fun onCreate() {
         super.onCreate()
         sessionStore = SessionStore(this)
+        // Always set the hardcoded URL on startup
+        if (!sessionStore.isServerConfigured) {
+            sessionStore.baseUrl = ApiClient.normalizeBaseUrl("www.bariatricnepal.com")
+        }
         rebuildRepository()
     }
 
     fun rebuildRepository() {
-        repository = try {
-            if (sessionStore.isServerConfigured) {
-                BNRepository(ApiClient.create(sessionStore))
-            } else null
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    // Safe accessor — throws a clear error instead of a cryptic NPE
-    fun requireRepository(): BNRepository {
-        return repository ?: throw IllegalStateException("Repository not initialized — server URL missing")
+        repository = BNRepository(ApiClient.create(sessionStore))
     }
 }
