@@ -3,6 +3,7 @@ package com.bariatricnepal.app.ui.common
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -28,6 +29,10 @@ class MainActivity : AppCompatActivity() {
 
     private val app get() = application as BNApplication
 
+    // True when DietFragment is shown "outside" the normal bottom-nav flow
+    // (opened from the Meds tab's "View Diet Chart" card)
+    private var isShowingDietOverlay = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (!app.sessionStore.isLoggedIn) {
@@ -40,11 +45,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, NotificationsActivity::class.java))
         }
         mainBinding.bottomNav.setOnItemSelectedListener { item ->
+            isShowingDietOverlay = false
             val fragment: Fragment = when (item.itemId) {
                 R.id.nav_weight  -> WeightFragment()
                 R.id.nav_blood   -> BloodFragment()
                 R.id.nav_intake  -> IntakeFragment()
-                R.id.nav_diet    -> DietFragment()
                 R.id.nav_meds    -> MedsFragment()
                 R.id.nav_profile -> ProfileFragment()
                 else             -> WeightFragment()
@@ -54,8 +59,30 @@ class MainActivity : AppCompatActivity() {
             true
         }
         if (savedInstanceState == null) mainBinding.bottomNav.selectedItemId = R.id.nav_weight
+
+        // Back press: if showing Diet overlay, return to Meds tab instead of exiting
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (isShowingDietOverlay) {
+                    isShowingDietOverlay = false
+                    mainBinding.bottomNav.selectedItemId = R.id.nav_meds
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                    isEnabled = true
+                }
+            }
+        })
+
         loadProfileHeader()
         refreshUnreadBadge()
+    }
+
+    /** Called from MedsFragment's "View Diet Chart" card. */
+    fun openDiet() {
+        isShowingDietOverlay = true
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, DietFragment()).commit()
     }
 
     override fun onResume() { super.onResume(); refreshUnreadBadge() }

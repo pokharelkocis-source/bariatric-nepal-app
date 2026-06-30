@@ -1,5 +1,6 @@
 package com.bariatricnepal.app.ui.meds
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,7 @@ import com.bariatricnepal.app.databinding.FragmentMedsBinding
 import com.bariatricnepal.app.databinding.ItemMedDetailBinding
 import com.bariatricnepal.app.databinding.ItemValueChipBinding
 import com.bariatricnepal.app.ui.common.AccordionBuilder
+import com.bariatricnepal.app.ui.common.MainActivity
 import com.bariatricnepal.app.util.ApiResult
 import com.bariatricnepal.app.util.DateUtils
 import com.bariatricnepal.app.util.groupByDateDesc
@@ -44,7 +46,7 @@ class MedsFragment : Fragment() {
     private fun load() {
         lifecycleScope.launch {
             b.swipeRefresh.isRefreshing = true
-            when (val r = app.repository!!.getMedications()) {
+            when (val r = app.repository.getMedications()) {
                 is ApiResult.Success -> render(r.data)
                 is ApiResult.Error   -> showError(r.message)
             }
@@ -54,6 +56,11 @@ class MedsFragment : Fragment() {
 
     private fun render(meds: List<Medication>) {
         if (_b == null) return
+        b.medsContainer.removeAllViews()
+
+        // Diet chart is no longer a bottom-nav tab — add an entry point here
+        addDietChartButton()
+
         val groups = meds.groupByDateDesc { it.created_at }
         AccordionBuilder.build(requireContext(), b.medsContainer, groups, getString(R.string.no_meds)) { parent, med ->
             val mb = ItemMedDetailBinding.inflate(layoutInflater, parent, false)
@@ -77,7 +84,6 @@ class MedsFragment : Fragment() {
             }
             chip("Dose", med.dosage)
             chip("Frequency", med.frequency)
-            // NEW v13: take_time chip
             chip("Take at", med.take_time)
             chip("From", DateUtils.prettyDate(med.start_date))
             chip("Until", DateUtils.prettyDate(med.end_date))
@@ -86,7 +92,6 @@ class MedsFragment : Fragment() {
                 mb.tvMedInstructions.text = "📝 ${med.instructions}"
             }
 
-            // NEW v13: "Taken today" checkbox — only for active meds
             if (active) {
                 val checkBox = CheckBox(requireContext()).apply {
                     text = "Taken today"
@@ -94,24 +99,7 @@ class MedsFragment : Fragment() {
                     setTextColor(requireContext().getColor(R.color.bn_text))
                     setPadding(0, 12, 0, 0)
                 }
-                checkBox.setOnCheckedChangeListener { _, isChecked ->
-                    lifecycleScope.launch {
-                        when (val r = app.repository!!.logMedicationTaken(med.id, isChecked)) {
-                            is ApiResult.Success -> {
-                                if (isChecked) takenToday.add(med.id)
-                                else takenToday.remove(med.id)
-                            }
-                            is ApiResult.Error -> {
-                                // Revert on failure
-                                checkBox.setOnCheckedChangeListener(null)
-                                checkBox.isChecked = !isChecked
-                                Toast.makeText(requireContext(), r.message, Toast.LENGTH_SHORT).show()
-                                // Re-attach listener
-                                attachCheckListener(checkBox, med.id)
-                            }
-                        }
-                    }
-                }
+                attachCheckListener(checkBox, med.id)
                 parent.addView(checkBox)
             }
 
@@ -119,10 +107,43 @@ class MedsFragment : Fragment() {
         }
     }
 
+    /** Adds a tappable "View Diet Chart" card above the medication list. */
+    private fun addDietChartButton() {
+        val ctx = requireContext()
+        val card = LinearLayout(ctx).apply {
+            orientation = LinearLayout.HORIZONTAL
+            setBackgroundResource(R.drawable.bg_stat_card)
+            setPadding(32, 28, 32, 28)
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { bottomMargin = 24 }
+            isClickable = true
+            isFocusable = true
+        }
+        val label = TextView(ctx).apply {
+            text = "🍽  View Diet Chart"
+            textSize = 14f
+            setTextColor(ctx.getColor(R.color.bn_text))
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+        }
+        val arrow = TextView(ctx).apply {
+            text = "›"
+            textSize = 18f
+            setTextColor(Color.parseColor("#9CA3AF"))
+        }
+        card.addView(label)
+        card.addView(arrow)
+        card.setOnClickListener {
+            (activity as? MainActivity)?.openDiet()
+        }
+        b.medsContainer.addView(card)
+    }
+
     private fun attachCheckListener(checkBox: CheckBox, medId: String) {
         checkBox.setOnCheckedChangeListener { _, isChecked ->
             lifecycleScope.launch {
-                when (val r = app.repository!!.logMedicationTaken(medId, isChecked)) {
+                when (val r = app.repository.logMedicationTaken(medId, isChecked)) {
                     is ApiResult.Success -> {
                         if (isChecked) takenToday.add(medId) else takenToday.remove(medId)
                     }
@@ -140,6 +161,7 @@ class MedsFragment : Fragment() {
     private fun showError(msg: String) {
         if (_b == null) return
         b.medsContainer.removeAllViews()
+        addDietChartButton()
         val tv = TextView(requireContext())
         tv.text = msg
         tv.setTextColor(requireContext().getColor(R.color.bn_red))
